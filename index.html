@@ -106,18 +106,23 @@
 fetch('gallery.json')
   .then(r => r.json())
   .then(data => {
-    const g       = document.getElementById('gallery');
-    const rowH    = parseInt(getComputedStyle(g).getPropertyValue('grid-auto-rows'));
-    const rowGap  = parseInt(getComputedStyle(g).getPropertyValue('gap')) || 0;
+    const g      = document.getElementById('gallery');
+    const rowH   = () => parseInt(getComputedStyle(g).getPropertyValue('grid-auto-rows'));
+    const rowGap = () => parseInt(getComputedStyle(g).getPropertyValue('gap')) || 0;
 
-    /* helper: fit one image */
-    function setSpan(img){
-      const span = Math.ceil(
-        (img.getBoundingClientRect().height + rowGap) / (rowH + rowGap)
-      );
-      img.parentElement.style.gridRowEnd = `span ${span}`;
+    /* -- recalc spans for ALL items -- */
+    function fitMasonrySpans() {
+      g.querySelectorAll('#gallery > a').forEach(item => {
+        const img  = item.firstElementChild;
+        const span = Math.ceil(
+          (img.getBoundingClientRect().height + rowGap()) /
+          (rowH() + rowGap())
+        );
+        item.style.gridRowEnd = `span ${span}`;
+      });
     }
 
+    /* -- build gallery -- */
     data.images.forEach(({ src, alt }) => {
       const a = document.createElement('a');
       a.href  = src;
@@ -130,20 +135,18 @@ fetch('gallery.json')
         'w-full object-cover object-center transition duration-300 hover:scale-105';
 
       img.onload = () => {
-        /* — if the shot is definitely wider than tall, span 2 columns on ≥ lg screens — */
+        /* tag wide images BEFORE recalculating spans */
         if (img.naturalWidth > img.naturalHeight * 1.3) {
           a.classList.add('lg:col-span-2');
         }
-        setSpan(img);
+        fitMasonrySpans();          // recalc everyone, fixes gaps
       };
 
       a.appendChild(img);
       g.appendChild(a);
     });
 
-    window.addEventListener('resize', () =>
-      g.querySelectorAll('img').forEach(setSpan)
-    );
+    window.addEventListener('resize', fitMasonrySpans); // keep tidy on break‑points
   })
   .catch(console.error);
 </script>
