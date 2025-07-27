@@ -1,12 +1,3 @@
 {
-  "images": [
-    {
-      "src": "/dist/assets/img_6827.jpg",
-      "alt": "flower portrait"
-    },
-    {
-      "src": "/dist/assets/001.jpg",
-      "alt": "pigeons gare"
-    }
-  ]
+  "images": []
 }
