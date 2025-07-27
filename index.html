@@ -107,39 +107,31 @@ fetch('gallery.json')
   .then(r => r.json())
   .then(data => {
     const g = document.getElementById('gallery');
+
     data.images.forEach(({ src, alt }) => {
-  const a   = document.createElement('a');
-  a.href    = src;
-  a.dataset.fancybox = 'gallery';
+      const a   = document.createElement('a');
+      a.href    = src;
+      a.dataset.fancybox = 'gallery';
 
-  const img = new Image();
-  img.src   = src;
-  img.alt   = alt || '';
-  img.className =
-    'w-full object-cover object-center transition duration-300 hover:scale-105';
+      const img = new Image();
+      img.src   = src;
+      img.alt   = alt || '';
+      img.className =
+        'w-full object-cover object-center transition duration-300 hover:scale-105';
 
-  /* — calculate span once this image has its naturalHeight — */
-  img.onload = () => {
-    const span = Math.ceil(img.naturalHeight / 8);   // 8 px = auto‑rows
-    a.style.gridRowEnd = `span ${span}`;
-  };
-
-  a.appendChild(img);
-  g.appendChild(a);
-});
-
-    });
-
-    /* Correctif Masonry */
-    window.addEventListener('load', () => {
-      document.querySelectorAll('#gallery > a').forEach(a => {
-        const img  = a.firstElementChild;
-        const span = Math.ceil(img.naturalHeight / 8);
+      /* Calcule la hauteur une fois l'image chargée */
+      img.onload = () => {
+        const span = Math.ceil(img.naturalHeight / 8); // 8 px = auto-rows
         a.style.gridRowEnd = `span ${span}`;
-      });
+      };
+
+      a.appendChild(img);
+      g.appendChild(a);
     });
-  });
+  })
+  .catch(err => console.error('gallery error', err));
 </script>
+
 
 <!-- ✂─────────────────────────────────────────────✂ -->
   
