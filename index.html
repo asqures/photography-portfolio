@@ -119,11 +119,25 @@ fetch('gallery.json')
       img.className =
         'w-full object-cover object-center transition duration-300 hover:scale-105';
 
-      /* Calcule la hauteur une fois l'image chargée */
-      img.onload = () => {
-        const span = Math.ceil(img.naturalHeight / 8); // 8 px = auto-rows
-        a.style.gridRowEnd = `span ${span}`;
-      };
+      /* ----- Masonry span calculation that honours row-gap ----- */
+function fitMasonrySpans() {
+  const grid     = document.getElementById('gallery');
+  const rowH     = parseInt(getComputedStyle(grid)
+                    .getPropertyValue('grid-auto-rows'));      // 8 px
+  const rowGap   = parseInt(getComputedStyle(grid)
+                    .getPropertyValue('gap')) || 0;            // 12 px
+
+  grid.querySelectorAll('#gallery > a').forEach(item => {
+    const img   = item.firstElementChild;
+    const h     = img.getBoundingClientRect().height;          // displayed height
+    const span  = Math.ceil((h + rowGap) / (rowH + rowGap));   // exact multiple
+    item.style.gridRowEnd = `span ${span}`;
+  });
+}
+
+/* call once after all images arrive, and again on window resize */
+window.addEventListener('load',   fitMasonrySpans);
+window.addEventListener('resize', fitMasonrySpans);
 
       a.appendChild(img);
       g.appendChild(a);
