@@ -108,6 +108,19 @@ fetch('gallery.json')
   .then(data => {
     const g = document.getElementById('gallery');
 
+    /* — read grid metrics once — */
+    const rowH   = parseInt(getComputedStyle(g).getPropertyValue('grid-auto-rows')); // 8 px
+    const rowGap = parseInt(getComputedStyle(g).getPropertyValue('gap')) || 0;       // 12 px
+
+    /* — helper sets the correct span for a single <img> — */
+    function setSpan(img) {
+      const span = Math.ceil(
+        (img.getBoundingClientRect().height + rowGap) / (rowH + rowGap)
+      );
+      img.parentElement.style.gridRowEnd = `span ${span}`;
+    }
+
+    /* — build the gallery — */
     data.images.forEach(({ src, alt }) => {
       const a   = document.createElement('a');
       a.href    = src;
@@ -119,28 +132,15 @@ fetch('gallery.json')
       img.className =
         'w-full object-cover object-center transition duration-300 hover:scale-105';
 
-      /* ----- Masonry span calculation that honours row-gap ----- */
-function fitMasonrySpans() {
-  const grid     = document.getElementById('gallery');
-  const rowH     = parseInt(getComputedStyle(grid)
-                    .getPropertyValue('grid-auto-rows'));      // 8 px
-  const rowGap   = parseInt(getComputedStyle(grid)
-                    .getPropertyValue('gap')) || 0;            // 12 px
-
-  grid.querySelectorAll('#gallery > a').forEach(item => {
-    const img   = item.firstElementChild;
-    const h     = img.getBoundingClientRect().height;          // displayed height
-    const span  = Math.ceil((h + rowGap) / (rowH + rowGap));   // exact multiple
-    item.style.gridRowEnd = `span ${span}`;
-  });
-}
-
-/* call once after all images arrive, and again on window resize */
-window.addEventListener('load',   fitMasonrySpans);
-window.addEventListener('resize', fitMasonrySpans);
+      img.onload = () => setSpan(img);   // run once this image is loaded
 
       a.appendChild(img);
       g.appendChild(a);
+    });
+
+    /* — recalc everything on window resize — */
+    window.addEventListener('resize', () => {
+      g.querySelectorAll('img').forEach(setSpan);
     });
   })
   .catch(err => console.error('gallery error', err));
