@@ -100,30 +100,27 @@
   </header>
   <!-- Content -->
 <section id="gallery"
-         class="grid grid-cols-3 gap-3 auto-rows-[8px]"></section>
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 auto-rows-[8px]"></section>
 
 <script>
 fetch('gallery.json')
   .then(r => r.json())
   .then(data => {
-    const g = document.getElementById('gallery');
+    const g       = document.getElementById('gallery');
+    const rowH    = parseInt(getComputedStyle(g).getPropertyValue('grid-auto-rows'));
+    const rowGap  = parseInt(getComputedStyle(g).getPropertyValue('gap')) || 0;
 
-    /* — read grid metrics once — */
-    const rowH   = parseInt(getComputedStyle(g).getPropertyValue('grid-auto-rows')); // 8 px
-    const rowGap = parseInt(getComputedStyle(g).getPropertyValue('gap')) || 0;       // 12 px
-
-    /* — helper sets the correct span for a single <img> — */
-    function setSpan(img) {
+    /* helper: fit one image */
+    function setSpan(img){
       const span = Math.ceil(
         (img.getBoundingClientRect().height + rowGap) / (rowH + rowGap)
       );
       img.parentElement.style.gridRowEnd = `span ${span}`;
     }
 
-    /* — build the gallery — */
     data.images.forEach(({ src, alt }) => {
-      const a   = document.createElement('a');
-      a.href    = src;
+      const a = document.createElement('a');
+      a.href  = src;
       a.dataset.fancybox = 'gallery';
 
       const img = new Image();
@@ -132,18 +129,23 @@ fetch('gallery.json')
       img.className =
         'w-full object-cover object-center transition duration-300 hover:scale-105';
 
-      img.onload = () => setSpan(img);   // run once this image is loaded
+      img.onload = () => {
+        /* — if the shot is definitely wider than tall, span 2 columns on ≥ lg screens — */
+        if (img.naturalWidth > img.naturalHeight * 1.3) {
+          a.classList.add('lg:col-span-2');
+        }
+        setSpan(img);
+      };
 
       a.appendChild(img);
       g.appendChild(a);
     });
 
-    /* — recalc everything on window resize — */
-    window.addEventListener('resize', () => {
-      g.querySelectorAll('img').forEach(setSpan);
-    });
+    window.addEventListener('resize', () =>
+      g.querySelectorAll('img').forEach(setSpan)
+    );
   })
-  .catch(err => console.error('gallery error', err));
+  .catch(console.error);
 </script>
 
 
