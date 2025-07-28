@@ -30,6 +30,7 @@
   <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.9.1/dist/js/jquery.justifiedGallery.min.js"></script>
   <!-- Masonry -->
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
   <!-- End - Fancybox Scripts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -131,11 +132,12 @@ fetch('gallery.json')
     });
 
     /* Fire Masonry after all images are in DOM */
-    new Masonry(g, {
-      itemSelector: 'a',
-      columnWidth: g.firstElementChild,  // use first tile as width reference
-      gutter: 16,
+        new Masonry(g, {
+      itemSelector   : 'a',
+      columnWidth    : g.firstElementChild,
+      gutter         : 16,
       percentPosition: true,
+      horizontalOrder: true   // ← keeps DOM order intact
     });
   });
 </script>
