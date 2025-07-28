@@ -103,34 +103,38 @@
     </nav>
   </header>
   <!-- Content -->
+<!-- 1.  Container: NO grid / column classes, only the plugin hook -->
 <section id="gallery" class="justified-gallery"></section>
 
+<!-- 2.  Build thumbnails, then fire Justified Gallery -->
 <script>
 fetch('gallery.json')
   .then(r => r.json())
   .then(({ images }) => {
     const g = document.getElementById('gallery');
 
+    /* create <a><img></a> for every photo ------------ */
     images.forEach(({ src, alt }) => {
       const a = document.createElement('a');
-      a.href  = src;
+      a.href  = src;                       // Fancybox target
       a.dataset.fancybox = 'gallery';
-      a.className = 'inline-block mb-4 break-inside-avoid';   // inline, no w-full
+      a.className = 'inline-block mb-4';   //  ← NO  w-full  or block
 
-      const img = new Image();
-      img.src = src;
-      img.alt = alt || '';
-      img.className = 'object-cover transition hover:scale-105';  // no w-full
+      const img   = new Image();
+      img.src     = src;
+      img.alt     = alt || '';
+      img.className =
+        'object-cover transition hover:scale-105';  //  ← NO w-full
 
       a.appendChild(img);
       g.appendChild(a);
     });
 
-    // fire the justified layout
+    /* launch the justified layout -------------------- */
     $(g).justifiedGallery({
-      rowHeight : 250,
-      margins   : 16,
-      lastRow   : 'nojustify'
+      rowHeight : 250,   // 200‑300 is typical for a 3‑col look
+      margins   : 16,    // pixels; matches Tailwind gap‑4
+      lastRow   : 'nojustify' // leave final row natural
     });
   })
   .catch(console.error);
