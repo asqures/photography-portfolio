@@ -259,6 +259,18 @@
     {
       "breakAfter": true,
       "src": "/dist/assets/photos/img_6246_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_6303_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/jtp_3503_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_7132_redim.jpg"
     }
   ]
 }
