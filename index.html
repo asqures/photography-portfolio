@@ -177,25 +177,30 @@
   let i = 0;
 
   while (i < imgElems.length) {
-    // Look ahead at the next two images
-    const curr = imgElems[i];
-    const next = imgElems[i+1];
-    const next2= imgElems[i+2];
+    const remaining = imgElems.length - i;
+    // peek at the next up to three
+    const upcoming = imgElems.slice(i, i + 3);
 
-    // If the current one is landscape, or the *next* one is landscape,
-    // and you have at least one more to pair with, make a 2‑item row.
-    let chunkLen = 3;
-    if ((curr.naturalWidth > curr.naturalHeight && next) ||
-        (next && next.naturalWidth > next.naturalHeight && next2)) {
-      chunkLen = 2;
+    let chunkLen;
+    if (upcoming.length < 3) {
+      // fewer than 3 left: if the first is landscape and there's a second,
+      // pair them; otherwise take what's left
+      chunkLen = (upcoming[0].naturalWidth > upcoming[0].naturalHeight && upcoming.length > 1)
+        ? 2
+        : upcoming.length;
+    } else {
+      // 3 or more remain: if *any* of the three is landscape, make a pair,
+      // otherwise, do a trio
+      const hasLandscape = upcoming.some(img => img.naturalWidth > img.naturalHeight);
+      chunkLen = hasLandscape ? 2 : 3;
     }
 
-    // Otherwise, chunkLen stays 3 (or fewer if at the end)
     const chunk = imgElems.slice(i, i + chunkLen);
-    i += chunk.length;
+    i += chunkLen;
     sizeRow(chunk, cw);
   }
 }
+
 
   // 4) Size & append a single row
   function sizeRow(imgs, rowWidth) {
