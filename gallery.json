@@ -182,7 +182,7 @@
     },
     {
       "src": "/dist/assets/photos/jtp_5896_redim.jpg",
-      "breakAfter": true
+      "breakAfter": false
     },
     {
       "src": "/dist/assets/photos/img_9032_redim.jpeg",
