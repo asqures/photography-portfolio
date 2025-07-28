@@ -141,6 +141,12 @@
 
   // 1) Fetch & preload all images so we know their natural dimensions
   fetch('gallery.json')
+     .then(r => {
+      console.log('[DEBUG] fetched gallery.json, status=', r.status);
+      return r.json();
+    })
+    .then(({ images }) => {
+      console.log('[DEBUG] JSON parsed, got', images.length, 'entries');
     .then(r => r.json())
     .then(({ images }) => {
       // Turn your JSON into real Image() objects:
@@ -150,6 +156,8 @@
         img.alt = alt || '';
         return img;
       });
+    })
+    .catch(err => console.error('[DEBUG] fetch error:', err));
 
       // Wait for them all to load, then build rows—and redo on resize
       imagesLoaded(imgElems, () => buildRows(imgElems));
