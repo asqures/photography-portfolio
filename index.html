@@ -115,7 +115,7 @@ fetch('gallery.json')
       const a = document.createElement('a');
       a.href  = src;
       a.dataset.fancybox = 'gallery';
-      a.className  = 'mb-4 break-inside-avoid';        // no inline‑block, no width
+      a.className = 'inline-block mb-4 break-inside-avoid';   // inline, no w-full
 
       const img = new Image();
       img.src = src;
