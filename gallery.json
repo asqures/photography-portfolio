@@ -99,43 +99,31 @@
       "breakAfter": true
     },
     {
-      "src": "/dist/assets/photos/apc_3470_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/p9111460-modifier_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/img_5809_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/img_5872_redim.jpg"
-    },
-    {
       "src": "/dist/assets/photos/img_0556_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_2225_redim.jpg"
+      "src": "/dist/assets/photos/apc_3470_redim.jpg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/img_2328_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/idg_20250703_175701_533_redim.jpg"
+      "src": "/dist/assets/photos/img_2204_redim.jpg",
+      "breakAfter": true
+    },
+    {
+      "src": "/dist/assets/photos/img_2225_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/img_2424_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_2204_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/img_2661_redim.jpg"
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_2282_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/img_2455_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/img_2515_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/img_2506_redim.jpg"
@@ -144,13 +132,32 @@
       "src": "/dist/assets/photos/img_2458-edit_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_2615_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/pa222340_redim.jpg"
+      "src": "/dist/assets/photos/img_2515_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/img_2566_redim.jpg"
+    },
+    {
+      "src": "/dist/assets/photos/img_5809_redim.jpg"
+    },
+    {
+      "src": "/dist/assets/photos/img_2615_redim.jpg"
+    },
+    {
+      "src": "/dist/assets/photos/p9111460-modifier_redim.jpg",
+      "breakAfter": false
+    },
+    {
+      "src": "/dist/assets/photos/img_5872_redim.jpg"
+    },
+    {
+      "src": "/dist/assets/photos/idg_20250703_175701_533_redim.jpg"
+    },
+    {
+      "src": "/dist/assets/photos/img_2661_redim.jpg"
+    },
+    {
+      "src": "/dist/assets/photos/pa222340_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/p9111566_redim.jpg"
