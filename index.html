@@ -171,27 +171,31 @@
   }
 
   // 3) Layout function
-  function buildRows() {
-    gallery.innerHTML = '';
-    const cw = gallery.clientWidth;
-    let i = 0;
+  function buildRows(imgElems) {
+  gallery.innerHTML = '';
+  const cw = gallery.clientWidth;
+  let i = 0;
 
-    while (i < imgElems.length) {
-      const img = imgElems[i];
-      const isLandscape = img.naturalWidth > img.naturalHeight;
+  while (i < imgElems.length) {
+    // Look ahead at the next two images
+    const curr = imgElems[i];
+    const next = imgElems[i+1];
+    const next2= imgElems[i+2];
 
-      // pick 2 if landscape+portrait, else 3
-      let chunk;
-      if (isLandscape && i + 1 < imgElems.length) {
-        chunk = imgElems.slice(i, i + 2);
-        i += 2;
-      } else {
-        chunk = imgElems.slice(i, i + PER_ROW);
-        i += chunk.length;
-      }
-      sizeRow(chunk, cw);
+    // If the current one is landscape, or the *next* one is landscape,
+    // and you have at least one more to pair with, make a 2‑item row.
+    let chunkLen = 3;
+    if ((curr.naturalWidth > curr.naturalHeight && next) ||
+        (next && next.naturalWidth > next.naturalHeight && next2)) {
+      chunkLen = 2;
     }
+
+    // Otherwise, chunkLen stays 3 (or fewer if at the end)
+    const chunk = imgElems.slice(i, i + chunkLen);
+    i += chunk.length;
+    sizeRow(chunk, cw);
   }
+}
 
   // 4) Size & append a single row
   function sizeRow(imgs, rowWidth) {
