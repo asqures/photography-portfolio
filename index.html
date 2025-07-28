@@ -50,21 +50,21 @@
   </script>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     
-  <style>
-  /* put this in your <head> or styles.css */
-  #gallery {
-    width: 100%;
-  }
-  #gallery .row {
-    display: flex;
-    justify-content: flex-start; /* we’ll use margins */
-    margin-bottom: 16px;         /* vertical gutter */
-  }
-  #gallery .row a {
-    display: block;
-  }
-  /* remove any old #gallery a margin rules */
-</style>
+   <style>
+    #gallery { width:100%; }
+    #gallery .row {
+      display: flex;
+      margin-bottom: 16px;      /* vertical gutter */
+    }
+    #gallery .row a {
+      display: block;
+      /* right gutter on every item except last: */
+      margin-right: 16px;
+    }
+    #gallery .row a:last-child {
+      margin-right: 0;
+    }
+  </style>
     
 </head>
 
@@ -127,79 +127,77 @@
 <!-- wherever you want the gallery -->
 <section id="gallery"></section>
   
-<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
-<script>
-(function(){
-  const GUTTER = 16;             // px between images
-  const PER_ROW = 3;             // images per row
+ <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+  <script>
+  (function(){
+    const GUTTER = 16;
+    const PER_ROW = 3;  // you can leave as 3, or detect landscape to make 2‐item rows
 
-  function rebuildGallery(images) {
-    const gallery = document.getElementById('gallery');
-    gallery.innerHTML = '';
+    // Fetch + preload
+    fetch('gallery.json')
+      .then(r => r.json())
+      .then(({ images }) => {
+        // Create Image objects so .naturalWidth/Height exist
+        const imgElems = images.map(({ src, alt }) => {
+          const img = new Image();
+          img.src = src;
+          img.alt = alt || '';
+          return img;
+        });
 
-    // chunk the image list
-    for (let i = 0; i < images.length; i += PER_ROW) {
-      const chunk = images.slice(i, i + PER_ROW);
+        // Once all have loaded, build your rows
+        imagesLoaded(imgElems, () => makeRows(imgElems));
+        window.addEventListener('resize',
+          () => imagesLoaded(imgElems, () => makeRows(imgElems)));
+      })
+      .catch(console.error);
+
+    function makeRows(imgElems) {
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+      const cw = gallery.clientWidth;
+      let i = 0;
+
+      // Group into rows of PER_ROW
+      while (i < imgElems.length) {
+        const chunk = imgElems.slice(i, i + PER_ROW);
+        i += chunk.length;
+        renderRow(chunk, cw);
+      }
+    }
+
+    function renderRow(imgs, rowWidth) {
+      const ratios = imgs.map(img => img.naturalWidth / img.naturalHeight);
+      const totalR = ratios.reduce((a,b) => a + b, 0);
+      const H = (rowWidth - GUTTER * (imgs.length - 1)) / totalR;
+
       const rowDiv = document.createElement('div');
       rowDiv.className = 'row';
       gallery.appendChild(rowDiv);
 
-      // preload them so we can read naturalWidth/Height
-      const imgElems = chunk.map(srcObj => {
+      let used = 0;
+      ratios.forEach((r, idx) => {
+        // Compute width and round down, last one picks up slack
+        let W = Math.floor(r * H);
+        if (idx === ratios.length - 1) {
+          W = rowWidth - used - GUTTER * (imgs.length - 1);
+        }
+
+        const img = imgs[idx];
+        img.style.width  = W + 'px';
+        img.style.height = H + 'px';
+
         const a = document.createElement('a');
-        a.href = srcObj.src;
+        a.href = img.src;
         a.dataset.fancybox = 'gallery';
-        const img = new Image();
-        img.src = srcObj.src;
-        img.alt = srcObj.alt || '';
         a.appendChild(img);
         rowDiv.appendChild(a);
-        return img;
+
+        used += W;
       });
-
-      // once that row’s images load, size them
-      imagesLoaded(imgElems, () => sizeRow(rowDiv, imgElems));
     }
-  }
-
-  function sizeRow(rowDiv, imgElems) {
-    const availableW = rowDiv.clientWidth;
-    const ratios     = imgElems.map(i => i.naturalWidth / i.naturalHeight);
-    const totalR     = ratios.reduce((sum,r) => sum + r, 0);
-    // exact height so widths + gutters = availableW
-    const H = (availableW - GUTTER*(imgElems.length-1)) / totalR;
-
-    // assign widths (floor + remainder on last to avoid drift)
-    let used = 0;
-    ratios.forEach((r, idx) => {
-      let W = Math.floor(r * H);
-      if (idx === ratios.length-1) {
-        // give any leftover pixels to last
-        W = availableW - used - GUTTER*(ratios.length-1);
-      }
-      const img = imgElems[idx];
-      img.style.height = `${H.toFixed(2)}px`;
-      img.style.width  = `${W}px`;
-
-      // right gutter except last
-      const a = img.parentElement;
-      a.style.marginRight = idx < ratios.length-1 ? `${GUTTER}px` : '0';
-      used += W;
-    });
-  }
-
-  // fetch, build, and reflow on resize
-  fetch('gallery.json')
-    .then(r => r.json())
-    .then(({ images }) => {
-      rebuildGallery(images);
-      window.addEventListener('resize', () => rebuildGallery(images));
-    })
-    .catch(console.error);
-})();
-</script>
-
-
+  })();
+  </script>
 
 <!-- ✂─────────────────────────────────────────────✂ -->
   
