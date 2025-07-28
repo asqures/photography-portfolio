@@ -177,14 +177,15 @@
       "src": "/dist/assets/photos/img_6323_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_9032_redim.jpeg",
+      "src": "/dist/assets/photos/jtp_5823_redim.jpg",
       "breakAfter": true
     },
     {
-      "src": "/dist/assets/photos/jtp_5823_redim.jpg"
+      "src": "/dist/assets/photos/jtp_5896_redim.jpg",
+      "breakAfter": true
     },
     {
-      "src": "/dist/assets/photos/jtp_5896_redim.jpg",
+      "src": "/dist/assets/photos/img_9032_redim.jpeg",
       "breakAfter": true
     },
     {
@@ -213,6 +214,22 @@
     {
       "breakAfter": true,
       "src": "/dist/assets/photos/img_7260_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/jtp_5225_redim.jpg"
+    },
+    {
+      "breakAfter": true,
+      "src": "/dist/assets/photos/img_6440_redim.jpeg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_2824_redim.jpg"
+    },
+    {
+      "breakAfter": true,
+      "src": "/dist/assets/photos/img_2789_redim.jpg"
     }
   ]
 }
