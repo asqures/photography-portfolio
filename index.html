@@ -110,21 +110,30 @@ fetch('gallery.json')
   .then(r => r.json())
   .then(({ images }) => {
     const g = document.getElementById('gallery');
+
     images.forEach(({ src, alt }) => {
       const a = document.createElement('a');
-      a.href = src;
+      a.href  = src;
       a.dataset.fancybox = 'gallery';
-      a.innerHTML = `<img src="${src}" alt="${alt || ''}">`;
+      a.className = 'inline-block mb-4 break-inside-avoid';  // <— no w-full
+
+      const img = new Image();
+      img.src = src;
+      img.alt = alt || '';
+      img.className = 'w-full h-full object-cover transition hover:scale-105';
+
+      a.appendChild(img);
       g.appendChild(a);
     });
 
-    // Fire the justified layout
+    // fire the justified layout
     $(g).justifiedGallery({
-      rowHeight : 300,      // tweak = visual “row” height
-      margins   : 12,       // horizontal & vertical gap
-      lastRow   : 'nojustify' // keep last row natural
+      rowHeight : 250,
+      margins   : 16,
+      lastRow   : 'nojustify'
     });
-  });
+  })
+  .catch(console.error);
 </script>
 
 
