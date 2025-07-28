@@ -223,6 +223,42 @@
     {
       "breakAfter": true,
       "src": "/dist/assets/photos/img_2789_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_9342_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_7541_redim.jpeg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/jtp_3372_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_4637_redim.jpg"
+    },
+    {
+      "breakAfter": true,
+      "src": "/dist/assets/photos/img_2453_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/jtp_3919_redim.jpg"
+    },
+    {
+      "breakAfter": true,
+      "src": "/dist/assets/photos/jtp_3853_redim.jpg"
+    },
+    {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_4125_redim.jpg"
+    },
+    {
+      "breakAfter": true,
+      "src": "/dist/assets/photos/img_6246_redim.jpg"
     }
   ]
 }
