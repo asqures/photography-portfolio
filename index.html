@@ -125,7 +125,8 @@ fetch('gallery.json')
       img.src   = src;
       img.alt   = alt || '';
       img.className =
-        'w-full h-auto object-cover transition duration-300 hover:scale-105';
+      'object-cover transition duration-300 hover:scale-105';
+
 
       a.appendChild(img);
       gallery.appendChild(a);
