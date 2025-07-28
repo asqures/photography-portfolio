@@ -49,6 +49,12 @@
     }
   </script>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
+  <style>
+    #gallery { display: flex; flex-wrap: wrap; }
+    #gallery a { display: block; }
+  </style>
+    
 </head>
 
 <body
@@ -136,11 +142,6 @@
     window.addEventListener('resize', () => imagesLoaded('#gallery', layoutRows));
   });
 </script>
-
-<style>
-  #gallery { display: flex; flex-wrap: wrap; }
-  #gallery a { display: block; }
-</style>
 
 
 <!-- ✂─────────────────────────────────────────────✂ -->
