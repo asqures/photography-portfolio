@@ -134,79 +134,69 @@
 
 <!-- your gallery script with debug log -->
 <!-- right after <section id="gallery"></section> -->
+<!-- imagesLoaded is no longer used, so you can remove its <script> tag if you like -->
+
 <script>
 (async function(){
-  const GUTTER  = 16; // px between images
-  const PER_ROW = 3;  // default items per row
+  const GUTTER  = 16;                       // px between images
   const gallery = document.getElementById('gallery');
+  console.log('[DEBUG] gallery init →', gallery);
 
-  console.log('[DEBUG] gallery init');
-
-  // 1) Fetch JSON
-  let data;
-  try {
-    const res = await fetch('gallery.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    data = await res.json();
-  } catch (err) {
-    console.error('[ERROR] loading gallery.json:', err);
-    gallery.innerHTML = `<p style="color:red;">Failed to load gallery.json: ${err.message}</p>`;
-    return;
-  }
-
-  // 2) Preload all images
+  // 1) Fetch and preload all images
   let imgElems;
   try {
-    imgElems = await Promise.all(data.images.map(({src,alt}, i) => new Promise((res, rej) => {
-      console.log(`[DEBUG] preload ${i}:`, src);
+    const res = await fetch('gallery.json');
+    if (!res.ok) throw new Error(`gallery.json HTTP ${res.status}`);
+    const { images } = await res.json();
+    console.log('[DEBUG] JSON images.length =', images.length);
+
+    imgElems = await Promise.all(images.map(({src,alt}, i) => new Promise((res,rej) => {
       const img = new Image();
       img.src = src; img.alt = alt||'';
-      img.onload  = () => res(img);
-      img.onerror = () => rej(new Error(`img failed: ${src}`));
+      img.onload  = () => { console.log(`[DEBUG] preloaded #${i}`); res(img); };
+      img.onerror = () => rej(new Error(`Failed to load image ${src}`));
     })));
   } catch(err) {
-    console.error('[ERROR] preloading images:', err);
-    gallery.innerHTML = `<p style="color:red;">Image preload failed: ${err.message}</p>`;
+    console.error('[ERROR] preload:', err);
+    gallery.innerHTML = `<p style="color:red;">${err.message}</p>`;
     return;
   }
 
-  // 3) Layout function
-  function buildRows(imgElems) {
-  gallery.innerHTML = '';
-  const cw = gallery.clientWidth;
-  let i = 0;
+  // 2) Core layout
+  function buildRows() {
+    console.log('[DEBUG] buildRows start; total images =', imgElems.length);
+    gallery.innerHTML = '';
+    const cw = gallery.clientWidth;
+    let i = 0;
 
-  while (i < imgElems.length) {
-    const remaining = imgElems.length - i;
-    // peek at the next up to three
-    const upcoming = imgElems.slice(i, i + 3);
+    while (i < imgElems.length) {
+      // peek at the next up to 3 imgs
+      const upcoming = imgElems.slice(i, i + 3);
+      const flags    = upcoming.map(img => img.naturalWidth > img.naturalHeight ? 'L' : 'P');
+      console.log(`[DEBUG] upcoming [${i}→${i+upcoming.length-1}] flags=`, flags);
 
-    let chunkLen;
-    if (upcoming.length < 3) {
-      // fewer than 3 left: if the first is landscape and there's a second,
-      // pair them; otherwise take what's left
-      chunkLen = (upcoming[0].naturalWidth > upcoming[0].naturalHeight && upcoming.length > 1)
-        ? 2
-        : upcoming.length;
-    } else {
-      // 3 or more remain: if *any* of the three is landscape, make a pair,
-      // otherwise, do a trio
-      const hasLandscape = upcoming.some(img => img.naturalWidth > img.naturalHeight);
-      chunkLen = hasLandscape ? 2 : 3;
+      let chunkLen;
+      if (upcoming.length < 3) {
+        // if only 1 left, take it; if 2 and first is landscape, pair them; otherwise take what's left
+        chunkLen = (upcoming.length === 2 && flags[0] === 'L') ? 2 : upcoming.length;
+      } else {
+        // 3 available: if any of the three is landscape, force a pair
+        const hasLandscape = flags.includes('L');
+        chunkLen = hasLandscape ? 2 : 3;
+      }
+      console.log('[DEBUG] chunkLen =', chunkLen);
+
+      const chunk = imgElems.slice(i, i + chunkLen);
+      i += chunkLen;
+      sizeRow(chunk, cw);
     }
-
-    const chunk = imgElems.slice(i, i + chunkLen);
-    i += chunkLen;
-    sizeRow(chunk, cw);
   }
-}
 
-
-  // 4) Size & append a single row
+  // 3) Size & append a row of imgs
   function sizeRow(imgs, rowWidth) {
     const ratios = imgs.map(img => img.naturalWidth / img.naturalHeight);
-    const totalR = ratios.reduce((sum, r) => sum + r, 0);
-    const H = (rowWidth - GUTTER * (imgs.length - 1)) / totalR;
+    const totalR = ratios.reduce((a,b) => a + b, 0);
+    const H      = (rowWidth - GUTTER * (imgs.length - 1)) / totalR;
 
     const rowDiv = document.createElement('div');
     rowDiv.className = 'row';
@@ -238,10 +228,9 @@
   buildRows();
   window.addEventListener('resize', buildRows);
 
-  console.log('[DEBUG] gallery built with', imgElems.length, 'images');
+  console.log('[DEBUG] gallery built');
 })();
 </script>
-
 
 
 <!-- ✂─────────────────────────────────────────────✂ -->
