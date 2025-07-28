@@ -51,12 +51,11 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     
   <style>
-  /* container remains a flex‑wrapper */
   #gallery {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
   }
-  /* each link is a block so margins apply cleanly */
   #gallery a {
     display: block;
   }
@@ -119,73 +118,89 @@
     </nav>
   </header>
   <!-- Content -->
-<!-- gallery container -->
+
+<!-- wherever you want the gallery -->
 <section id="gallery"></section>
 
+<!-- at the bottom of <body> -->
+<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
 <script>
-  const MARGIN = 16;
+  (function(){
+    const GUTTER = 16;               // px
+    const ITEMS_PER_ROW = 3;         // change to 2 or 4 if you like
 
-  function layoutRows() {
-    const gallery = document.getElementById('gallery');
-    const items   = Array.from(gallery.querySelectorAll('a img'));
-    const cw      = gallery.clientWidth;
+    function layoutRows() {
+      const gallery = document.getElementById('gallery');
+      const items   = Array.from(gallery.children);
+      const cw      = gallery.clientWidth;
 
-    // First, clear any old margins
-    items.forEach(img => {
-      img.parentElement.style.marginRight  = '0';
-      img.parentElement.style.marginBottom = '0';
-    });
-
-    // Lay out each chunk of three
-    for (let i = 0; i < items.length; i += 3) {
-      const row        = items.slice(i, i + 3);
-      const ratios     = row.map(img => img.naturalWidth / img.naturalHeight);
-      const totalRatio = ratios.reduce((sum, r) => sum + r, 0);
-      // height that makes sum(widths) + 2*MARGIN = container width
-      const h = (cw - MARGIN * (row.length - 1)) / totalRatio;
-
-      row.forEach((img, idx) => {
-        img.style.height = `${h}px`;
-        img.style.width  = `${h * ratios[idx]}px`;
-        // right gutter on all but last in row
-        img.parentElement.style.marginRight  = idx < row.length - 1
-          ? `${MARGIN}px`
-          : '0';
-        // bottom gutter on every tile for vertical spacing
-        img.parentElement.style.marginBottom = `${MARGIN}px`;
+      // reset any old margins
+      items.forEach(a => {
+        a.style.marginRight  = '0';
+        a.style.marginBottom = '0';
       });
+
+      // process each row‑chunk
+      for (let i = 0; i < items.length; i += ITEMS_PER_ROW) {
+        const rowItems = items.slice(i, i + ITEMS_PER_ROW);
+        const imgs     = rowItems.map(a => a.firstElementChild);
+        const ratios   = imgs.map(img => img.naturalWidth / img.naturalHeight);
+        const totalR   = ratios.reduce((sum, r) => sum + r, 0);
+
+        // exact height so that widths + gutters = cw
+        const h = (cw - GUTTER * (rowItems.length - 1)) / totalR;
+
+        // now assign widths, rounding down to avoid overflow
+        let used = 0;
+        ratios.forEach((r, idx) => {
+          const img = imgs[idx];
+          let w = Math.floor(r * h);
+
+          // if this is the LAST in the row, eat all remaining pixels
+          if (idx === rowItems.length - 1) {
+            const gaps = GUTTER * (rowItems.length - 1);
+            w = cw - used - gaps;
+          }
+
+          img.style.height = `${h.toFixed(2)}px`;
+          img.style.width  = `${w}px`;
+
+          // horizontal gutter on all but last
+          if (idx < rowItems.length - 1) {
+            rowItems[idx].style.marginRight = `${GUTTER}px`;
+          }
+          // vertical gutter on every item
+          rowItems[idx].style.marginBottom = `${GUTTER}px`;
+
+          used += w;
+        });
+      }
     }
 
-    // Optionally remove bottom margin on the last row:
-    const lastRowStart = Math.floor((items.length - 1) / 3) * 3;
-    const lastRow      = items.slice(lastRowStart);
-    lastRow.forEach(img => {
-      img.parentElement.style.marginBottom = '0';
-    });
-  }
+    // build the gallery, then trigger layout
+    fetch('gallery.json')
+      .then(r => r.json())
+      .then(({ images }) => {
+        const gallery = document.getElementById('gallery');
+        images.forEach(({ src, alt }) => {
+          const a = document.createElement('a');
+          a.href = src;
+          a.dataset.fancybox = 'gallery';
+          const img = new Image();
+          img.src = src;
+          img.alt = alt || '';
+          a.appendChild(img);
+          gallery.appendChild(a);
+        });
 
-  // Fetch, append and then size
-  fetch('gallery.json')
-    .then(r => r.json())
-    .then(({ images }) => {
-      const gallery = document.getElementById('gallery');
-      images.forEach(({ src, alt }) => {
-        const a   = document.createElement('a');
-        a.href    = src;
-        a.dataset.fancybox = 'gallery';
-        const img = new Image();
-        img.src   = src;
-        img.alt   = alt || '';
-        a.appendChild(img);
-        gallery.appendChild(a);
-      });
-
-      // Once images are in DOM and loaded, lay them out—and redo on resize
-      imagesLoaded(gallery, layoutRows);
-      window.addEventListener('resize',
-        () => imagesLoaded(gallery, layoutRows));
-    })
-    .catch(console.error);
+        // only run once all have loaded
+        imagesLoaded(gallery, layoutRows);
+        // re‑layout on resize
+        window.addEventListener('resize',
+          () => imagesLoaded(gallery, layoutRows));
+      })
+      .catch(console.error);
+  })();
 </script>
 
 
