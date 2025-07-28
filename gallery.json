@@ -51,11 +51,12 @@
       "src": "/dist/assets/photos/dscf4763_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/dscf5962_redim.jpg"
+      "breakAfter": false,
+      "src": "/dist/assets/photos/dscf6113-2_redim.jpg"
     },
     {
-      "breakAfter": true,
-      "src": "/dist/assets/photos/dscf6113-2_redim.jpg"
+      "src": "/dist/assets/photos/dscf5962_redim.jpg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/img_4269_redim.jpg",
@@ -132,62 +133,80 @@
       "src": "/dist/assets/photos/img_2458-edit_redim.jpg"
     },
     {
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_2565_redim.jpg"
+    },
+    {
       "src": "/dist/assets/photos/img_2515_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/img_2566_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_5809_redim.jpg"
+      "breakAfter": false,
+      "src": "/dist/assets/photos/p9101339_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_2615_redim.jpg"
+      "src": "/dist/assets/photos/img_2615_redim.jpg",
+      "breakAfter": true
     },
     {
-      "src": "/dist/assets/photos/p9111460-modifier_redim.jpg",
-      "breakAfter": false
+      "src": "/dist/assets/photos/img_2661_redim.jpg",
+      "breakAfter": true
     },
     {
-      "src": "/dist/assets/photos/img_5872_redim.jpg"
+      "breakAfter": false,
+      "src": "/dist/assets/photos/img_6827_redim.jpg"
+    },
+    {
+      "breakAfter": true,
+      "src": "/dist/assets/photos/img_6392_redim.jpg"
+    },
+    {
+      "src": "/dist/assets/photos/p9111548_redim.jpg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/idg_20250703_175701_533_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_2661_redim.jpg"
+      "src": "/dist/assets/photos/p9111566_redim.jpg",
+      "breakAfter": true
     },
     {
-      "src": "/dist/assets/photos/pa222340_redim.jpg"
+      "src": "/dist/assets/photos/img_5872_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/p9111566_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/p9111548_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/jtp_6526_redim.jpg"
+      "src": "/dist/assets/photos/img_5809_redim.jpg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/jtp_6684_redim.jpg"
     },
     {
+      "src": "/dist/assets/photos/jtp_6526_redim.jpg",
+      "breakAfter": true
+    },
+    {
       "src": "/dist/assets/photos/img_6323_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_9032_redim.jpeg"
+      "src": "/dist/assets/photos/img_9032_redim.jpeg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/jtp_5823_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/jtp_5896_redim.jpg"
+      "src": "/dist/assets/photos/jtp_5896_redim.jpg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/img_5971_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_5949_redim.jpg"
+      "src": "/dist/assets/photos/img_5949_redim.jpg",
+      "breakAfter": true
     }
   ]
 }
