@@ -20,4 +20,4 @@ collections:
             collapsed: false
             fields:
               - { name: src, label: "File", widget: image }
-              - { label: "Break After", name: "breakAfter", widget: "boolean", default: false }
+              - { label: "Break After", name: "breakAfter", widget: "boolean", default: false, required: false }
