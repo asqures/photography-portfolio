@@ -28,6 +28,8 @@
   <link  href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.9.1/dist/css/justifiedGallery.min.css" rel="stylesheet"/>
   <!-- Justified‑Gallery JS -->
   <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.9.1/dist/js/jquery.justifiedGallery.min.js"></script>
+  <!-- Masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <!-- End - Fancybox Scripts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -104,7 +106,7 @@
   </header>
   <!-- Content -->
 <section id="gallery"
-         class="grid grid-cols-3 gap-4 auto-rows-[250px]">
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 </section>
   
 <script>
@@ -114,21 +116,28 @@ fetch('gallery.json')
     const g = document.getElementById('gallery');
 
     images.forEach(({ src, alt }) => {
-      const a = document.createElement('a');
-      a.href  = src;                  // Fancybox target
+      const a   = document.createElement('a');
+      a.href    = src;
       a.dataset.fancybox = 'gallery';
+      a.className = 'block break-inside-avoid';      // Masonry will size width
 
       const img = new Image();
       img.src   = src;
       img.alt   = alt || '';
-      img.className =
-        'w-full h-full object-cover transition hover:scale-105';
+      img.className = 'w-full h-auto object-cover transition hover:scale-105';
 
       a.appendChild(img);
       g.appendChild(a);
     });
-  })
-  .catch(console.error);
+
+    /* Fire Masonry after all images are in DOM */
+    new Masonry(g, {
+      itemSelector: 'a',
+      columnWidth: g.firstElementChild,  // use first tile as width reference
+      gutter: 16,
+      percentPosition: true,
+    });
+  });
 </script>
 
 
