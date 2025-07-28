@@ -4,7 +4,8 @@
       "src": "/dist/assets/photos/dscf3678_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/dscf3728_redim.jpg"
+      "src": "/dist/assets/photos/dscf3728_redim.jpg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/img_4245_redim.jpg"
