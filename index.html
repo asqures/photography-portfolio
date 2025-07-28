@@ -130,6 +130,11 @@
   
 <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
 <script>
+  (function(){
+   console.log('[DEBUG] gallery IIFE entered, #gallery =',
+               document.getElementById('gallery'));
+   const GUTTER = 16, PER_ROW = 3;
+    
 (function(){
   const GUTTER  = 16;   // px between images
   const gallery = document.getElementById('gallery');
