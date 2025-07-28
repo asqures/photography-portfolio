@@ -133,50 +133,54 @@
 <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
 
 <!-- your gallery script with debug log -->
+<!-- right after <section id="gallery"></section> -->
 <script>
-(function(){
-  // DEBUG: make sure this script actually runs and finds your section
-  console.log('[DEBUG] gallery IIFE entered, #gallery =', document.getElementById('gallery'));
+(async function(){
+  const GUTTER  = 16; // px between images
+  const PER_ROW = 3;  // default items per row
+  const gallery = document.getElementById('gallery');
 
-  const GUTTER  = 16;  // px between images
-  const PER_ROW = 3;   // default items per row
+  console.log('[DEBUG] gallery init');
 
-  // 1) Fetch & preload all images
-  fetch('gallery.json')
-    .then(r => {
-      console.log('[DEBUG] fetched gallery.json, status=', r.status);
-      return r.json();
-    })
-    .then(({ images }) => {
-      console.log('[DEBUG] JSON parsed, got', images.length, 'entries');
-      // convert to Image objects so naturalWidth/naturalHeight exist
-      const imgElems = images.map(({ src, alt }) => {
-        const img = new Image();
-        img.src = src;
-        img.alt = alt || '';
-        return img;
-      });
+  // 1) Fetch JSON
+  let data;
+  try {
+    const res = await fetch('gallery.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    data = await res.json();
+  } catch (err) {
+    console.error('[ERROR] loading gallery.json:', err);
+    gallery.innerHTML = `<p style="color:red;">Failed to load gallery.json: ${err.message}</p>`;
+    return;
+  }
 
-      // once loaded, build rows; also on resize
-      imagesLoaded(imgElems, () => buildRows(imgElems));
-      window.addEventListener('resize',
-        () => imagesLoaded(imgElems, () => buildRows(imgElems)));
-    })
-    .catch(err => {
-      console.error('[DEBUG] fetch error:', err);
-    });
+  // 2) Preload all images
+  let imgElems;
+  try {
+    imgElems = await Promise.all(data.images.map(({src,alt}, i) => new Promise((res, rej) => {
+      console.log(`[DEBUG] preload ${i}:`, src);
+      const img = new Image();
+      img.src = src; img.alt = alt||'';
+      img.onload  = () => res(img);
+      img.onerror = () => rej(new Error(`img failed: ${src}`));
+    })));
+  } catch(err) {
+    console.error('[ERROR] preloading images:', err);
+    gallery.innerHTML = `<p style="color:red;">Image preload failed: ${err.message}</p>`;
+    return;
+  }
 
-  // 2) Decide 2‑item vs 3‑item rows and render
-  function buildRows(imgElems) {
-    const gallery = document.getElementById('gallery');
+  // 3) Layout function
+  function buildRows() {
     gallery.innerHTML = '';
     const cw = gallery.clientWidth;
     let i = 0;
 
     while (i < imgElems.length) {
-      const current = imgElems[i];
-      const isLandscape = current.naturalWidth > current.naturalHeight;
+      const img = imgElems[i];
+      const isLandscape = img.naturalWidth > img.naturalHeight;
 
+      // pick 2 if landscape+portrait, else 3
       let chunk;
       if (isLandscape && i + 1 < imgElems.length) {
         chunk = imgElems.slice(i, i + 2);
@@ -185,14 +189,12 @@
         chunk = imgElems.slice(i, i + PER_ROW);
         i += chunk.length;
       }
-
       sizeRow(chunk, cw);
     }
   }
 
-  // 3) Size & append a single row
+  // 4) Size & append a single row
   function sizeRow(imgs, rowWidth) {
-    const gallery = document.getElementById('gallery');
     const ratios = imgs.map(img => img.naturalWidth / img.naturalHeight);
     const totalR = ratios.reduce((sum, r) => sum + r, 0);
     const H = (rowWidth - GUTTER * (imgs.length - 1)) / totalR;
@@ -222,7 +224,13 @@
       rowDiv.appendChild(a);
     });
   }
-})();  // ← make sure these two characters are present
+
+  // Initial render + reflow on resize
+  buildRows();
+  window.addEventListener('resize', buildRows);
+
+  console.log('[DEBUG] gallery built with', imgElems.length, 'images');
+})();
 </script>
 
 
