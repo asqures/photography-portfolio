@@ -51,19 +51,20 @@
       "src": "/dist/assets/photos/dscf4763_redim.jpg"
     },
     {
+      "src": "/dist/assets/photos/img_4269_redim.jpg",
+      "breakAfter": false
+    },
+    {
+      "src": "/dist/assets/photos/img_2818_redim.jpg",
+      "breakAfter": true
+    },
+    {
       "src": "/dist/assets/photos/dscf5962_redim.jpg",
       "breakAfter": false
     },
     {
       "breakAfter": true,
       "src": "/dist/assets/photos/dscf6113-2_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/img_4269_redim.jpg",
-      "breakAfter": false
-    },
-    {
-      "src": "/dist/assets/photos/img_2818_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/apc_5419-hdr_redim.jpg",
