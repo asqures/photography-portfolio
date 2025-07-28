@@ -115,12 +115,12 @@ fetch('gallery.json')
       const a = document.createElement('a');
       a.href  = src;
       a.dataset.fancybox = 'gallery';
-      a.className = 'inline-block mb-4 break-inside-avoid';  // <— no w-full
+      a.className  = 'mb-4 break-inside-avoid';        // no inline‑block, no width
 
       const img = new Image();
       img.src = src;
       img.alt = alt || '';
-      img.className = 'w-full h-full object-cover transition hover:scale-105';
+      img.className = 'object-cover transition hover:scale-105';  // no w-full
 
       a.appendChild(img);
       g.appendChild(a);
