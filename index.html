@@ -24,6 +24,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
   <script src="https://code.jquery.com/jquery-3.6.3.min.js"
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <!-- Justified‑Gallery CSS -->
+  <link  href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.9.1/dist/css/justifiedGallery.min.css" rel="stylesheet"/>
+  <!-- Justified‑Gallery JS -->
+  <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.9.1/dist/js/jquery.justifiedGallery.min.js"></script>
   <!-- End - Fancybox Scripts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -99,58 +103,28 @@
     </nav>
   </header>
   <!-- Content -->
-<section id="gallery"
-         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3
-                auto-rows-[2px]">
-</section>
+<section id="gallery" class="justified-gallery"></section>
 
 <script>
 fetch('gallery.json')
   .then(r => r.json())
-  .then(data => {
-    const g      = document.getElementById('gallery');
-    const rowH   = () => parseInt(getComputedStyle(g).getPropertyValue('grid-auto-rows'));
-    const rowGap = () => parseInt(getComputedStyle(g).getPropertyValue('gap')) || 0;
-
-    /* -- recalc spans for ALL items -- */
-    function fitMasonrySpans() {
-      g.querySelectorAll('#gallery > a').forEach(item => {
-        const img  = item.firstElementChild;
-        const span = Math.ceil(
-          (img.getBoundingClientRect().height + rowGap()) /
-          (rowH() + rowGap())
-        );
-        item.style.gridRowEnd = `span ${span}`;
-      });
-    }
-
-    /* -- build gallery -- */
-    data.images.forEach(({ src, alt }) => {
+  .then(({ images }) => {
+    const g = document.getElementById('gallery');
+    images.forEach(({ src, alt }) => {
       const a = document.createElement('a');
-      a.href  = src;
+      a.href = src;
       a.dataset.fancybox = 'gallery';
-
-      const img = new Image();
-      img.src   = src;
-      img.alt   = alt || '';
-      img.className =
-        'w-full object-cover object-center transition duration-300 hover:scale-105';
-
-      img.onload = () => {
-        /* tag wide images BEFORE recalculating spans */
-        if (img.naturalWidth > img.naturalHeight * 1.2) {
-          a.classList.add('lg:col-span-2');
-        }
-        fitMasonrySpans();          // recalc everyone, fixes gaps
-      };
-
-      a.appendChild(img);
+      a.innerHTML = `<img src="${src}" alt="${alt || ''}">`;
       g.appendChild(a);
     });
 
-    window.addEventListener('resize', fitMasonrySpans); // keep tidy on break‑points
-  })
-  .catch(console.error);
+    // Fire the justified layout
+    $(g).justifiedGallery({
+      rowHeight : 300,      // tweak = visual “row” height
+      margins   : 12,       // horizontal & vertical gap
+      lastRow   : 'nojustify' // keep last row natural
+    });
+  });
 </script>
 
 
