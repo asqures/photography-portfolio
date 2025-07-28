@@ -138,63 +138,66 @@
 
 <script>
 (async function(){
-  const GUTTER  = 16;                       // px between images
-  const gallery = document.getElementById('gallery');
-  console.log('[DEBUG] gallery init →', gallery);
+  const GUTTER    = 16;    // px between images
+  const MAX_PORTRAIT = 3;  // portraits per row
+  const gallery   = document.getElementById('gallery');
 
-  // 1) Fetch and preload all images
-  let imgElems;
+  // 1) Load JSON
+  let data;
   try {
     const res = await fetch('gallery.json');
-    if (!res.ok) throw new Error(`gallery.json HTTP ${res.status}`);
-    const { images } = await res.json();
-    console.log('[DEBUG] JSON images.length =', images.length);
-
-    imgElems = await Promise.all(images.map(({src,alt}, i) => new Promise((res,rej) => {
-      const img = new Image();
-      img.src = src; img.alt = alt||'';
-      img.onload  = () => { console.log(`[DEBUG] preloaded #${i}`); res(img); };
-      img.onerror = () => rej(new Error(`Failed to load image ${src}`));
-    })));
-  } catch(err) {
-    console.error('[ERROR] preload:', err);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    data = await res.json();
+  } catch (err) {
+    console.error('[ERROR] Couldn’t load gallery.json:', err);
     gallery.innerHTML = `<p style="color:red;">${err.message}</p>`;
     return;
   }
 
-  // 2) Core layout
-  function buildRows() {
-    console.log('[DEBUG] buildRows start; total images =', imgElems.length);
-    gallery.innerHTML = '';
-    const cw = gallery.clientWidth;
-    let i = 0;
-
-    while (i < imgElems.length) {
-      // peek at the next up to 3 imgs
-      const upcoming = imgElems.slice(i, i + 3);
-      const flags    = upcoming.map(img => img.naturalWidth > img.naturalHeight ? 'L' : 'P');
-      console.log(`[DEBUG] upcoming [${i}→${i+upcoming.length-1}] flags=`, flags);
-
-      let chunkLen;
-      if (upcoming.length < 3) {
-        // if only 1 left, take it; if 2 and first is landscape, pair them; otherwise take what's left
-        chunkLen = (upcoming.length === 2 && flags[0] === 'L') ? 2 : upcoming.length;
-      } else {
-        // 3 available: if any of the three is landscape, force a pair
-        const hasLandscape = flags.includes('L');
-        chunkLen = hasLandscape ? 2 : 3;
-      }
-      console.log('[DEBUG] chunkLen =', chunkLen);
-
-      const chunk = imgElems.slice(i, i + chunkLen);
-      i += chunkLen;
-      sizeRow(chunk, cw);
-    }
+  // 2) Preload all images (and carry over breakAfter)
+  let images;
+  try {
+    images = await Promise.all(data.images.map((imgDef, i) =>
+      new Promise((res, rej) => {
+        const img = new Image();
+        img.src        = imgDef.src;
+        img.alt        = imgDef.alt || '';
+        img.breakAfter = imgDef.breakAfter === true;
+        img.onload     = () => res(img);
+        img.onerror    = () => rej(new Error(`Failed to load: ${imgDef.src}`));
+      })
+    ));
+  } catch(err) {
+    console.error('[ERROR] Preloading images:', err);
+    gallery.innerHTML = `<p style="color:red;">${err.message}</p>`;
+    return;
   }
 
-  // 3) Size & append a row of imgs
+  // 3) Build & render rows
+  function buildRows() {
+    gallery.innerHTML = '';
+    const cw = gallery.clientWidth;
+    let row = [];
+
+    images.forEach((img, idx) => {
+      row.push(img);
+
+      const isLandscape = img.naturalWidth > img.naturalHeight;
+      const maxInRow    = isLandscape ? 2 : MAX_PORTRAIT;
+      const atMax       = row.length >= maxInRow;
+      const forcedBreak = img.breakAfter;
+      const isLast      = idx === images.length - 1;
+
+      if (forcedBreak || atMax || isLast) {
+        sizeRow(row, cw);
+        row = [];
+      }
+    });
+  }
+
+  // 4) Size one row to fill the full width
   function sizeRow(imgs, rowWidth) {
-    const ratios = imgs.map(img => img.naturalWidth / img.naturalHeight);
+    const ratios = imgs.map(i => i.naturalWidth / i.naturalHeight);
     const totalR = ratios.reduce((a,b) => a + b, 0);
     const H      = (rowWidth - GUTTER * (imgs.length - 1)) / totalR;
 
@@ -204,31 +207,29 @@
     gallery.appendChild(rowDiv);
 
     let used = 0;
-    ratios.forEach((r, idx) => {
+    ratios.forEach((r, i) => {
       let W = Math.floor(r * H);
-      if (idx === imgs.length - 1) {
+      if (i === imgs.length - 1) {
         W = rowWidth - used - GUTTER * (imgs.length - 1);
       }
       used += W;
 
-      const img = imgs[idx];
+      const img = imgs[i];
       img.style.width  = W + 'px';
       img.style.height = H + 'px';
 
       const a = document.createElement('a');
-      a.href = img.src;
+      a.href            = img.src;
       a.dataset.fancybox = 'gallery';
       a.appendChild(img);
-      if (idx < imgs.length - 1) a.style.marginRight = GUTTER + 'px';
+      if (i < imgs.length - 1) a.style.marginRight = GUTTER + 'px';
       rowDiv.appendChild(a);
     });
   }
 
-  // Initial render + reflow on resize
+  // initial render + update on resize
   buildRows();
   window.addEventListener('resize', buildRows);
-
-  console.log('[DEBUG] gallery built');
 })();
 </script>
 
