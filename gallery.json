@@ -51,12 +51,12 @@
       "src": "/dist/assets/photos/dscf4763_redim.jpg"
     },
     {
-      "breakAfter": false,
-      "src": "/dist/assets/photos/dscf6113-2_redim.jpg"
+      "src": "/dist/assets/photos/dscf5962_redim.jpg",
+      "breakAfter": false
     },
     {
-      "src": "/dist/assets/photos/dscf5962_redim.jpg",
-      "breakAfter": true
+      "breakAfter": true,
+      "src": "/dist/assets/photos/dscf6113-2_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/img_4269_redim.jpg",
