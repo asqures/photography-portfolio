@@ -122,25 +122,43 @@
     const gallery = document.getElementById('gallery');
     const items   = Array.from(gallery.querySelectorAll('a img'));
     const cw      = gallery.clientWidth;
-    // break into chunks of 3
     for (let i = 0; i < items.length; i += 3) {
-      const row = items.slice(i, i + 3);
-      const ratios = row.map(img => img.naturalWidth / img.naturalHeight);
-      const totalRatio = ratios.reduce((sum, r) => sum + r, 0);
-      const h = (cw - MARGIN * (row.length - 1)) / totalRatio;
+      const row       = items.slice(i, i + 3);
+      const ratios    = row.map(img => img.naturalWidth / img.naturalHeight);
+      const totalRatio= ratios.reduce((sum, r) => sum + r, 0);
+      const h         = (cw - MARGIN * (row.length - 1)) / totalRatio;
       row.forEach((img, idx) => {
-        img.style.height = `${h}px`;
-        img.style.width  = `${h * ratios[idx]}px`;
-        img.parentElement.style.marginRight = (idx < row.length - 1) ? `${MARGIN}px` : '0';
+        img.style.height              = `${h}px`;
+        img.style.width               = `${h * ratios[idx]}px`;
+        img.parentElement.style.marginRight = idx < row.length - 1
+          ? `${MARGIN}px`
+          : '0';
       });
     }
   }
 
-  // on load & resize, after images are ready
-  window.addEventListener('load', () => {
-    imagesLoaded('#gallery', layoutRows);
-    window.addEventListener('resize', () => imagesLoaded('#gallery', layoutRows));
-  });
+  // 1) Fetch & append your tiles
+  fetch('gallery.json')
+    .then(r => r.json())
+    .then(({ images }) => {
+      const gallery = document.getElementById('gallery');
+      images.forEach(({ src, alt }) => {
+        const a   = document.createElement('a');
+        a.href    = src;
+        a.dataset.fancybox = 'gallery';
+        const img = new Image();
+        img.src   = src;
+        img.alt   = alt || '';
+        img.style.display = 'block';
+        a.appendChild(img);
+        gallery.appendChild(a);
+      });
+
+      // 2) Only once images exist & finish loading, run layoutRows
+      imagesLoaded(gallery, layoutRows);
+      window.addEventListener('resize', () => imagesLoaded(gallery, layoutRows));
+    })
+    .catch(console.error);
 </script>
 
 
