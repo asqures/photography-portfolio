@@ -51,9 +51,16 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     
   <style>
-    #gallery { display: flex; flex-wrap: wrap; }
-    #gallery a { display: block; }
-  </style>
+  /* container remains a flex‑wrapper */
+  #gallery {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  /* each link is a block so margins apply cleanly */
+  #gallery a {
+    display: block;
+  }
+</style>
     
 </head>
 
@@ -122,22 +129,42 @@
     const gallery = document.getElementById('gallery');
     const items   = Array.from(gallery.querySelectorAll('a img'));
     const cw      = gallery.clientWidth;
+
+    // First, clear any old margins
+    items.forEach(img => {
+      img.parentElement.style.marginRight  = '0';
+      img.parentElement.style.marginBottom = '0';
+    });
+
+    // Lay out each chunk of three
     for (let i = 0; i < items.length; i += 3) {
-      const row       = items.slice(i, i + 3);
-      const ratios    = row.map(img => img.naturalWidth / img.naturalHeight);
-      const totalRatio= ratios.reduce((sum, r) => sum + r, 0);
-      const h         = (cw - MARGIN * (row.length - 1)) / totalRatio;
+      const row        = items.slice(i, i + 3);
+      const ratios     = row.map(img => img.naturalWidth / img.naturalHeight);
+      const totalRatio = ratios.reduce((sum, r) => sum + r, 0);
+      // height that makes sum(widths) + 2*MARGIN = container width
+      const h = (cw - MARGIN * (row.length - 1)) / totalRatio;
+
       row.forEach((img, idx) => {
-        img.style.height              = `${h}px`;
-        img.style.width               = `${h * ratios[idx]}px`;
-        img.parentElement.style.marginRight = idx < row.length - 1
+        img.style.height = `${h}px`;
+        img.style.width  = `${h * ratios[idx]}px`;
+        // right gutter on all but last in row
+        img.parentElement.style.marginRight  = idx < row.length - 1
           ? `${MARGIN}px`
           : '0';
+        // bottom gutter on every tile for vertical spacing
+        img.parentElement.style.marginBottom = `${MARGIN}px`;
       });
     }
+
+    // Optionally remove bottom margin on the last row:
+    const lastRowStart = Math.floor((items.length - 1) / 3) * 3;
+    const lastRow      = items.slice(lastRowStart);
+    lastRow.forEach(img => {
+      img.parentElement.style.marginBottom = '0';
+    });
   }
 
-  // 1) Fetch & append your tiles
+  // Fetch, append and then size
   fetch('gallery.json')
     .then(r => r.json())
     .then(({ images }) => {
@@ -149,14 +176,14 @@
         const img = new Image();
         img.src   = src;
         img.alt   = alt || '';
-        img.style.display = 'block';
         a.appendChild(img);
         gallery.appendChild(a);
       });
 
-      // 2) Only once images exist & finish loading, run layoutRows
+      // Once images are in DOM and loaded, lay them out—and redo on resize
       imagesLoaded(gallery, layoutRows);
-      window.addEventListener('resize', () => imagesLoaded(gallery, layoutRows));
+      window.addEventListener('resize',
+        () => imagesLoaded(gallery, layoutRows));
     })
     .catch(console.error);
 </script>
