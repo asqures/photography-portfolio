@@ -51,6 +51,13 @@
       "src": "/dist/assets/photos/dscf4763_redim.jpg"
     },
     {
+      "src": "/dist/assets/photos/dscf5962_redim.jpg"
+    },
+    {
+      "breakAfter": true,
+      "src": "/dist/assets/photos/dscf6113-2_redim.jpg"
+    },
+    {
       "src": "/dist/assets/photos/img_4269_redim.jpg",
       "breakAfter": false
     },
@@ -78,28 +85,24 @@
       "src": "/dist/assets/photos/jtp_5272_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/apc_3470_redim.jpg"
+      "src": "/dist/assets/photos/jtp_6147_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/apc_4475_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/img_5500_redim.jpg"
+      "src": "/dist/assets/photos/apc_6609-hdr_redim.jpg",
+      "breakAfter": true
     },
     {
       "src": "/dist/assets/photos/img_5415_redim.jpg"
     },
     {
+      "src": "/dist/assets/photos/img_5500_redim.jpg",
+      "breakAfter": true
+    },
+    {
+      "src": "/dist/assets/photos/apc_3470_redim.jpg"
+    },
+    {
       "src": "/dist/assets/photos/p9111460-modifier_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/jtp_6147_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/apc_6609-hdr_redim.jpg"
-    },
-    {
-      "src": "/dist/assets/photos/dscf5962_redim.jpg"
     },
     {
       "src": "/dist/assets/photos/img_5809_redim.jpg"
