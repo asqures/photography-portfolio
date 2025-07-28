@@ -110,36 +110,30 @@
 <section id="gallery" class="justified-gallery"></section>
 
 <script>
-fetch('gallery.json')
-  .then(r => r.json())
-  .then(({ images }) => {
-    const gallery = document.getElementById('gallery');
+  fetch('gallery.json')
+    .then(r => r.json())
+    .then(({ images }) => {
+      const gallery = document.getElementById('gallery');
+      images.forEach(({ src, alt }) => {
+        const a = document.createElement('a');
+        a.href = src; a.dataset.fancybox = 'gallery';
+        const img = new Image();
+        img.src = src; img.alt = alt || '';
+        img.className = 'object-cover transition duration-300 hover:scale-105';
+        a.appendChild(img);
+        gallery.appendChild(a);
+      });
 
-    /* build <a><img> tiles ---------------------------- */
-    images.forEach(({ src, alt }) => {
-      const a   = document.createElement('a');
-      a.href    = src;
-      a.dataset.fancybox = 'gallery';
-
-      const img = new Image();
-      img.src   = src;
-      img.alt   = alt || '';
-      img.className =
-      'object-cover transition duration-300 hover:scale-105';
-
-
-      a.appendChild(img);
-      gallery.appendChild(a);
-    });
-
-    /* fire Justified‑Gallery once tiles are there ------ */
-    $('#gallery').justifiedGallery({
-      rowHeight : 300,   // tweak until each row feels right
-      margins   : 16,
-      lastRow   : 'nojustify'
-    });
-  })
-  .catch(console.error);
+      // Ensure layout only after imgs are in the DOM and loaded:
+      imagesLoaded(gallery, () => {
+        $('#gallery').justifiedGallery({
+          rowHeight : 300,
+          margins   : 16,
+          lastRow   : 'nojustify'  // or 'justify' if you want the final row filled too
+        });
+      });
+    })
+    .catch(console.error);
 </script>
 
 
