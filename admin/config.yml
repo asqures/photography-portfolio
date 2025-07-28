@@ -20,4 +20,3 @@ collections:
             collapsed: false
             fields:
               - { name: src, label: "File", widget: image }
-              - { name: alt, label: "Alt text", widget: string, required: false }
