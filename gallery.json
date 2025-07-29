@@ -125,10 +125,11 @@
       "src": "/dist/assets/photos/img_2282_redim.jpg"
     },
     {
-      "src": "/dist/assets/photos/img_2424_redim.jpg"
+      "src": "/dist/assets/photos/img_2566_redim.jpg",
+      "breakAfter": false
     },
     {
-      "src": "/dist/assets/photos/img_2566_redim.jpg",
+      "src": "/dist/assets/photos/img_2424_redim.jpg",
       "breakAfter": true
     },
     {
